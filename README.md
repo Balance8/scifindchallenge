@@ -4,6 +4,8 @@ If you are looking for the backend, it lives here [backend](https://slo-event-pl
 
 [Check out the deployed site](https://slo-event-planner-client.herokuapp.com/)
 
+**Please note: Due to the project being hosted on heroku hobby, the first load can take several seconds as the dyno awakens.**
+
 # The Stack
 
 ## Frontend
