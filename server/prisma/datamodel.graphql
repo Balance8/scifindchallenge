@@ -1,0 +1,50 @@
+# SET_NULL (default) - OVERRIDE: CASCADE
+
+type User {
+  id: ID! @id
+  name: String!
+  email: String! @unique
+  password: String!
+  posts: [Post!]! @relation(name: "PostToUser", onDelete: CASCADE)
+  comments: [Comment!]! @relation(name: "CommentToUser", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Post {
+  id: ID! @id
+  title: String!
+  body: String!
+  published: Boolean!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  author: User! @relation(name: "PostToUser", onDelete: SET_NULL)
+  comments: [Comment!]! @relation(name: "CommentToPost", onDelete: CASCADE)
+}
+
+type Comment {
+  id: ID! @id
+  text: String!
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  author: User! @relation(name: "CommentToUser", onDelete: SET_NULL)
+  post: Post! @relation(name: "CommentToPost", onDelete: SET_NULL)
+}
+
+type Collection {
+  id: ID! @id
+  title: String! @unique
+  items: [Item!]! @relation(name: "ItemToCollection", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}
+
+type Item {
+  id: ID! @id
+  name: String!
+  imageUrl: String!
+  price: Float!
+  collection: Collection @relation(name: "ItemToCollection", onDelete: SET_NULL)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+}

@@ -1,0 +1,199 @@
+# import UserOrderByInput, PostOrderByInput, CommentOrderByInput from "./generated/prisma.graphql"
+
+type Query {
+  users(
+    query: String
+    first: Int
+    skip: Int
+    after: String
+    orderBy: UserOrderByInput
+  ): [User!]!
+  posts(
+    query: String
+    first: Int
+    skip: Int
+    after: String
+    orderBy: PostOrderByInput
+  ): [Post!]!
+  myPosts(
+    query: ID
+    first: Int
+    skip: Int
+    after: String
+    orderBy: PostOrderByInput
+  ): [Post!]!
+  comments(
+    query: String
+    first: Int
+    skip: Int
+    after: String
+    orderBy: CommentOrderByInput
+  ): [Comment!]!
+  me: User!
+  post(id: ID!): Post!
+  collections: [Collection!]!
+  collection(id: ID!): Collection
+  getCollectionsByTitle(title: String): Collection
+}
+
+type Mutation {
+  login(data: LoginUserInput!): AuthPayLoad!
+  logout: Boolean!
+
+  createUser(data: CreateUserInput!): AuthPayLoad!
+  deleteUser: User!
+  updateUser(data: UpdateUserInput!): User!
+
+  createPost(data: CreatePostInput!): Post!
+  deletePost(id: ID!): Post!
+  updatePost(id: ID!, data: UpdatePostInput!): Post!
+
+  createComment(data: CreateCommentInput!): Comment!
+  deleteComment(id: ID!): Comment!
+  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
+
+  createCollection(data: CreateCollectionInput!): Collection!
+  deleteCollection(id: ID!): Collection!
+
+  createItem(data: CreateItemInput!): Item!
+  deleteItem(id: ID!): Item!
+
+  createMultipleItems(
+    title: String!
+    data: [CreateMultipleItemInput]
+  ): AggregateItem
+
+  createPayment(source: String!, amount: Int!, currency: String!): User
+}
+
+type Subscription {
+  comment(postId: ID!): CommentSubscriptionPayload!
+  post: PostSubscriptionPayload!
+  myPost: PostSubscriptionPayload!
+}
+
+type AuthPayLoad {
+  token: String!
+  user: User!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+  password: String
+}
+
+input CreatePostInput {
+  title: String!
+  body: String!
+  published: Boolean!
+}
+
+input CreateCollectionInput {
+  title: String!
+  items: [CreateItemInput]!
+}
+
+input CreateItemInput {
+  name: String!
+  price: Int!
+  imageUrl: String!
+  collection: ID!
+}
+
+input CreateMultipleItemInput {
+  name: String!
+  price: Int!
+  imageUrl: String!
+}
+
+input UpdatePostInput {
+  title: String
+  body: String
+  published: Boolean
+}
+
+input CreateCommentInput {
+  text: String!
+  post: ID!
+}
+
+input UpdateCommentInput {
+  text: String
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String
+  password: String!
+  posts: [Post!]!
+  comments: [Comment!]!
+  updatedAt: String!
+  createdAt: String!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author: User!
+  post: Post!
+  updatedAt: String!
+  createdAt: String!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+  updatedAt: String!
+  createdAt: String!
+  author: User!
+  comments: [Comment!]!
+}
+
+type Collection {
+  id: ID!
+  title: String!
+  items: [Item!]!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  price: Float!
+  imageUrl: String!
+  collection: Collection
+}
+
+type AggregateItem {
+  count: Int!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+}
